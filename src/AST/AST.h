@@ -4,6 +4,12 @@
 
 #pragma once
 
-class AST {
+#include <vector>
 
+#include "../Token.h"
+
+class AST {
+public:
+    Token token;
+    std::vector<AST> children;
 };

@@ -12,8 +12,9 @@ int main() {
         return 0;
 
     Lexer lexer { input };
-    Interpreter interpreter { lexer };
-    int result = interpreter.Expr();
+    Parser parser { lexer };
+    Interpreter interpreter { parser };
+    int result = interpreter.Interpret();
     std::cout << result << "\n";
 
     std::cin.get();

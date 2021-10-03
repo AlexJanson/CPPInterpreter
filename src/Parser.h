@@ -9,6 +9,8 @@
 #include "Lexer.h"
 #include "AST/AST.h"
 
+class Lexer;
+
 class Parser {
 public:
     std::shared_ptr<Lexer> lexer;

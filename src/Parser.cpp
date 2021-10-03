@@ -3,10 +3,9 @@
 //
 
 #include "Parser.h"
-#include "./AST/Nodes.h"
 
 Parser::Parser(const Lexer &lexer)
-    : lexer(std::make_unique<Lexer>(lexer)) {}
+    : lexer(std::make_unique<Lexer>(lexer)), currentToken(this->lexer->GetNextToken()) {}
 
 void Parser::Error() {
     throw std::exception("Error parsing input");
@@ -23,7 +22,7 @@ AST Parser::Factor() {
     Token token = currentToken;
     if (token.GetType() == Token::INTEGER) {
         Eat(Token::INTEGER);
-        return Num(token);
+        return {token, {}};
     }
     else if (token.GetType() == Token::LPAREN) {
         Eat(Token::LPAREN);
@@ -38,16 +37,21 @@ AST Parser::Term() {
 
     while (currentToken.GetType() == Token::MUL || currentToken.GetType() == Token::DIV) {
         Token token = currentToken;
-        if (token.GetType() == Token::MUL) {
+        if (currentToken.GetType() == Token::MUL) {
             Eat(Token::MUL);
+            std::vector<AST> children = {node, Factor()};
+            node = {token, children};
         }
-        else if (token.GetType() == Token::DIV) {
+        else if (currentToken.GetType() == Token::DIV) {
             Eat(Token::DIV);
+            std::vector<AST> children = {node, Factor()};
+            node = {token, children};
         }
-
-        node = BinOp(node, token, Factor());
-
+        else {
+            throw std::exception("Invalid syntax");
+        }
     }
+
     return node;
 }
 
@@ -58,12 +62,18 @@ AST Parser::Expr() {
         Token token = currentToken;
         if (token.GetType() == Token::PLUS) {
             Eat(Token::PLUS);
+            std::vector<AST> children = {node, Term()};
+            return {token, children};
         }
         else if (token.GetType() == Token::MINUS) {
             Eat(Token::MINUS);
+            std::vector<AST> children = {node, Term()};
+            return {token, children};
+        }
+        else {
+            throw std::exception("Invalid syntax");
         }
 
-        node = BinOp(node, token, Term());
     }
 
     return node;

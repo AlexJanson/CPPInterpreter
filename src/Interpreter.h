@@ -13,6 +13,8 @@ private:
     std::unique_ptr<Parser> parser;
 public:
     Interpreter(const Parser& parser);
-    int Visit();
+    int Visit_Num(const AST& node);
+    int Visit_BinOp(const AST& node);
+    int Visit(const AST& node);
     int Interpret();
 };
