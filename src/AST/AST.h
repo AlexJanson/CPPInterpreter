@@ -4,12 +4,10 @@
 
 #pragma once
 
-#include <vector>
-
-#include "../Token.h"
+class Visitor;
 
 class AST {
 public:
-    Token token;
-    std::vector<AST> children;
+    virtual ~AST() = default;
+    virtual void Accept(Visitor& visitor) = 0;
 };

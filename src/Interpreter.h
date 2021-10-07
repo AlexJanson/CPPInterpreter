@@ -5,16 +5,15 @@
 #pragma once
 
 #include "Parser.h"
+#include "AST/NodeVisitor.h"
 
 #include <memory>
 
 class Interpreter {
 private:
     std::unique_ptr<Parser> parser;
+    std::unique_ptr<NodeVisitor> visitor;
 public:
-    Interpreter(const Parser& parser);
-    int Visit_Num(const AST& node);
-    int Visit_BinOp(const AST& node);
-    int Visit(const AST& node);
+    Interpreter(const Parser& parser, const NodeVisitor& visitor);
     int Interpret();
 };

@@ -18,10 +18,10 @@ public:
 private:
     static void Error();
     void Eat(const Token::TokenType& type);
-    AST Factor();
-    AST Term();
-    AST Expr();
+    std::shared_ptr<AST*> Factor();
+    std::shared_ptr<AST*> Term();
+    std::shared_ptr<AST*> Expr();
 public:
     Parser(const Lexer& lexer);
-    AST Parse();
+    std::shared_ptr<AST*> Parse();
 };
