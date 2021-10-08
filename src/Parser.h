@@ -9,6 +9,8 @@
 #include "Lexer.h"
 #include "AST/AST.h"
 
+#include <vector>
+
 class Lexer;
 
 class Parser {
@@ -18,6 +20,13 @@ public:
 private:
     static void Error();
     void Eat(const Token::TokenType& type);
+    std::shared_ptr<AST*> Program();
+    std::shared_ptr<AST*> CompoundStatement();
+    std::vector<std::shared_ptr<AST *>> StatementList();
+    std::shared_ptr<AST*> Statement();
+    std::shared_ptr<AST*> AssignmentStatement();
+    std::shared_ptr<AST*> Variable();
+    std::shared_ptr<AST*> Empty();
     std::shared_ptr<AST*> Factor();
     std::shared_ptr<AST*> Term();
     std::shared_ptr<AST*> Expr();

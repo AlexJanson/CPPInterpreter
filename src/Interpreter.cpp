@@ -4,11 +4,18 @@
 
 #include "Interpreter.h"
 
-Interpreter::Interpreter(const Parser& parser, const NodeVisitor& visitor)
-    : parser(std::make_unique<Parser>(parser)), visitor(std::make_unique<NodeVisitor>(visitor)) {}
+#include <utility>
+
+Interpreter::Interpreter(Parser parser, NodeVisitor* visitor)
+    : parser(std::move(parser)), visitor(visitor) {}
+
+Interpreter::~Interpreter() {
+    delete visitor;
+}
 
 int Interpreter::Interpret() {
-    std::shared_ptr<AST*> tree = parser->Parse();
-    (*tree)->Accept((*visitor));
+    std::shared_ptr<AST*> tree = parser.Parse();
+    (*tree)->Accept(*visitor);
     return visitor->result;
 }
+

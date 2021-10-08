@@ -7,13 +7,12 @@
 #include "Parser.h"
 #include "AST/NodeVisitor.h"
 
-#include <memory>
-
 class Interpreter {
 private:
-    std::unique_ptr<Parser> parser;
-    std::unique_ptr<NodeVisitor> visitor;
+    Parser parser;
+    NodeVisitor* visitor;
 public:
-    Interpreter(const Parser& parser, const NodeVisitor& visitor);
+    Interpreter(Parser parser, NodeVisitor* visitor);
+    ~Interpreter();
     int Interpret();
 };

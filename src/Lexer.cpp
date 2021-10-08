@@ -22,6 +22,24 @@ void Lexer::SkipWhitespace() {
         Advance();
 }
 
+char Lexer::Peek() {
+    int peekPos = pos + 1;
+    if (peekPos > text.length() - 1)
+        return -1;
+    return text[peekPos];
+}
+
+Token Lexer::Id() {
+    std::string result;
+    while (currentChar && isalnum(currentChar)) {
+        result += currentChar;
+        Advance();
+    }
+
+    Token token = reservedKeywords.count(result) ? reservedKeywords.at(result) : Token(Token::ID, result);
+    return token;
+}
+
 int Lexer::Integer() {
     std::string result;
     while (isdigit(currentChar)) {
@@ -39,37 +57,60 @@ Token Lexer::GetNextToken() {
             continue;
         }
 
+        if (isalpha(currentChar))
+            return Id();
+
         if (isdigit(currentChar))
             return {Token::INTEGER, Integer()};
 
         if (currentChar == '+') {
             Advance();
-            return {Token::PLUS, '+'};
+            return {Token::PLUS, "+"};
         }
 
         if (currentChar == '-') {
             Advance();
-            return {Token::MINUS, '-'};
+            return {Token::MINUS, "-"};
         }
 
         if (currentChar == '*') {
             Advance();
-            return {Token::MUL, '*'};
+            return {Token::MUL, "*"};
         }
 
         if (currentChar == '/') {
             Advance();
-            return {Token::DIV, '/'};
+            return {Token::DIV, "/"};
         }
 
         if (currentChar == '(') {
             Advance();
-            return {Token::LPAREN, '('};
+            return {Token::LPAREN, "("};
         }
 
         if (currentChar == ')') {
             Advance();
-            return {Token::RPAREN, ')'};
+            return {Token::RPAREN, ")"};
+        }
+
+        if (currentChar == '{') {
+            Advance();
+            return {Token::OPENPAREN, "{"};
+        }
+
+        if (currentChar == '}') {
+            Advance();
+            return {Token::CLOSEPAREN, "}"};
+        }
+
+        if (currentChar == '=') {
+            Advance();
+            return {Token::ASSIGN, "="};
+        }
+
+        if (currentChar == ';') {
+            Advance();
+            return {Token::SEMI, ";"};
         }
 
         Error();
