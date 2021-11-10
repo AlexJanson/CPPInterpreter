@@ -1,12 +1,12 @@
 #include <iostream>
 #include <string>
 
-#include "Interpreter.h"
-#include "Utils/File.h"
+#include "src/Interpreter.h"
+#include "src/Utils/File.h"
 
 int main() {
     File file("C:/CLion Projects/CPPInterpreter/src/file.txt");
-     std::string input = file.GetFileContentsAsString();
+    std::string input = file.GetFileContentsAsString();
 
     if (input.empty())
         return 0;
