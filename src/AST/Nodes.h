@@ -36,12 +36,21 @@ public:
     void Accept(Visitor& visitor) override;
 };
 
-class Program : public AST {
+class Module : public AST {
 public:
     std::vector<std::shared_ptr<AST*>> children;
 public:
-    Program() = default;
-    Program(std::vector<std::shared_ptr<AST*>> children);
+    Module() = default;
+    Module(std::vector<std::shared_ptr<AST*>> children);
+    void Accept(Visitor& visitor) override;
+};
+
+class Block : public AST {
+public:
+    std::vector<std::shared_ptr<AST*>> declarations;
+    std::vector<std::shared_ptr<AST*>> compoundStatements;
+public:
+    Block(std::vector<std::shared_ptr<AST*>> declarations, std::vector<std::shared_ptr<AST*>> compoundStatements);
     void Accept(Visitor& visitor) override;
 };
 
@@ -59,16 +68,34 @@ public:
     Token op, token;
     std::shared_ptr<AST*> left, right;
 public:
-    Assign(const std::shared_ptr<AST*> left, const Token& op, const std::shared_ptr<AST*> right);
+    Assign(std::shared_ptr<AST*> left, const Token& op, std::shared_ptr<AST*> right);
     void Accept(Visitor& visitor) override;
 };
 
 class Var : public AST {
 public:
     Token token;
-    std::variant<int, std::string> value;
+    std::variant<int, float, std::string> value;
 public:
     Var(const Token& token);
+    void Accept(Visitor& visitor) override;
+};
+
+class VarDecl : public AST {
+public:
+    std::shared_ptr<AST*> varNode;
+    std::shared_ptr<AST*> typeNode;
+public:
+    VarDecl(std::shared_ptr<AST*> varNode, std::shared_ptr<AST*> typeNode);
+    void Accept(Visitor& visitor) override;
+};
+
+class Type : public AST {
+public:
+    Token token;
+    std::variant<int, float, std::string> value;
+public:
+    Type(const Token& token);
     void Accept(Visitor& visitor) override;
 };
 

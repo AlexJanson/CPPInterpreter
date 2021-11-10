@@ -43,9 +43,13 @@ void NodeVisitor::Visit(UnaryOp &unaryOpNode) {
     }
 }
 
-void NodeVisitor::Visit(Program &programNode) {
-    for (const auto& child : programNode.children)
+void NodeVisitor::Visit(Module &moduleNode) {
+    for (const auto& child : moduleNode.children)
         (*child)->Accept(*this);
+}
+
+void NodeVisitor::Visit(Block &blockNode) {
+
 }
 
 void NodeVisitor::Visit(Compound &compoundNode) {
@@ -63,6 +67,14 @@ void NodeVisitor::Visit(Assign &assignNode) {
 void NodeVisitor::Visit(Var &varNode) {
     std::string varName = std::get<std::string>(varNode.value);
     result = globalScope.count(varName) ? globalScope.at(varName) : throw std::exception("No variable with that name");
+}
+
+void NodeVisitor::Visit(VarDecl &varDeclNode) {
+
+}
+
+void NodeVisitor::Visit(Type &typeNode) {
+
 }
 
 void NodeVisitor::Visit(NoOp &noOpNode) {

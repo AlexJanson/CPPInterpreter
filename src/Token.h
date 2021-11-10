@@ -9,18 +9,19 @@
 class Token {
 public:
     enum TokenType {
-        INTEGER = 0, PLUS, MINUS, MUL, DIV, LPAREN, RPAREN, OPENPAREN, CLOSEPAREN, SEMI, ASSIGN, ID, VAR, TOKENEOF
+        INTEGER = 0, INTEGER_CONST, FLOAT, FLOAT_CONST, PLUS, MINUS, MUL, DIV, LPAREN, RPAREN, OPENPAREN, CLOSEPAREN, SEMI, COMMA, ASSIGN, ID, VAR, TOKENEOF
     };
 private:
     TokenType type;
-    std::variant<int, std::string> value;
+    std::variant<int, float, std::string> value;
 public:
     Token() = default;
     Token(const TokenType& type, int value);
+    Token(const TokenType& type, float value);
     Token(const TokenType& type, const std::string& value);
 
     [[nodiscard]] TokenType GetType() const;
-    [[nodiscard]] std::variant<int, std::string> GetValue() const;
+    [[nodiscard]] std::variant<int, float, std::string> GetValue() const;
 
     std::string GetTypeName() const;
 private:

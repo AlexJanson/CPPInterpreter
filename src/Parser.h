@@ -20,7 +20,11 @@ public:
 private:
     static void Error();
     void Eat(const Token::TokenType& type);
-    std::shared_ptr<AST*> Program();
+    std::shared_ptr<AST*> Module();
+    std::shared_ptr<AST*> Block();
+    std::vector<std::shared_ptr<AST*>> Declarations();
+    std::vector<std::shared_ptr<AST*>> VariableDeclarations();
+    std::shared_ptr<AST*> TypeSpec();
     std::shared_ptr<AST*> CompoundStatement();
     std::vector<std::shared_ptr<AST *>> StatementList();
     std::shared_ptr<AST*> Statement();

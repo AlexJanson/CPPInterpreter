@@ -22,6 +22,15 @@ void Lexer::SkipWhitespace() {
         Advance();
 }
 
+void Lexer::SkipComment() {
+    while (currentChar != '*' && Peek() != '/') {
+        Advance();
+    }
+
+    Advance();
+    Advance();
+}
+
 char Lexer::Peek() {
     int peekPos = pos + 1;
     if (peekPos > text.length() - 1)
@@ -40,14 +49,26 @@ Token Lexer::Id() {
     return token;
 }
 
-int Lexer::Integer() {
+Token Lexer::Number() {
     std::string result;
     while (isdigit(currentChar)) {
         result += currentChar;
         Advance();
     }
 
-    return std::stoi(result);
+    if (currentChar == '.') {
+        result += currentChar;
+        Advance();
+
+        while (isdigit(currentChar)) {
+            result += currentChar;
+            Advance();
+        }
+
+        return {Token::FLOAT_CONST, std::stof(result)};
+    }
+
+    return {Token::INTEGER, std::stoi(result)};
 }
 
 Token Lexer::GetNextToken() {
@@ -57,11 +78,18 @@ Token Lexer::GetNextToken() {
             continue;
         }
 
+        if (currentChar == '/' && Peek() == '*') {
+            Advance();
+            Advance();
+            SkipComment();
+            continue;
+        }
+
         if (isalpha(currentChar))
             return Id();
 
         if (isdigit(currentChar))
-            return {Token::INTEGER, Integer()};
+            return Number();
 
         if (currentChar == '+') {
             Advance();
@@ -111,6 +139,11 @@ Token Lexer::GetNextToken() {
         if (currentChar == ';') {
             Advance();
             return {Token::SEMI, ";"};
+        }
+
+        if (currentChar == ',') {
+            Advance();
+            return {Token::COMMA, ","};
         }
 
         Error();

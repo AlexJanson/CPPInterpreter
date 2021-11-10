@@ -7,6 +7,9 @@
 Token::Token(const Token::TokenType &type, int value)
     : type(type), value(value) {}
 
+Token::Token(const Token::TokenType &type, float value)
+    : type(type), value(value) {}
+
 Token::Token(const Token::TokenType &type, const std::string &value)
     : type(type), value(value) {}
 
@@ -14,7 +17,7 @@ Token::TokenType Token::GetType() const {
     return type;
 }
 
-std::variant<int, std::string> Token::GetValue() const {
+std::variant<int, float, std::string> Token::GetValue() const {
     return value;
 }
 

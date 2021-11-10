@@ -16,7 +16,8 @@ private:
     char currentChar;
 
     std::unordered_map<std::string, Token> reservedKeywords = {
-            { "var", Token(Token::VAR, "var") }
+            { "var", Token(Token::VAR, "var") },
+            { "float", Token(Token::FLOAT, "float") }
     };
 public:
     Lexer(std::string input);
@@ -24,9 +25,10 @@ private:
     static void Error();
     void Advance();
     void SkipWhitespace();
+    void SkipComment();
     char Peek();
     Token Id();
-    int Integer();
+    Token Number();
 public: //TEMP
     Token GetNextToken();
 
