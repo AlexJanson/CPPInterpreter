@@ -6,7 +6,26 @@
 #include <Utils/File.h>
 #include <Interpreter.h>
 
-TEST(HelloTest, BasicAssertions) {
+class ProgramTest : public ::testing::Test {
+protected:
+    Lexer lexer;
+    Parser parser;
+    Interpreter interpreter;
+
+    ProgramTest() {};
+
+    void SetUp() override {
+        lexer = { "" };
+        parser = { lexer };
+        interpreter = { parser, nullptr };
+    }
+
+    void TearDown() override {
+
+    };
+};
+
+TEST_F(ProgramTest, BasicAssertions) {
     File file("C:/CLion Projects/CPPInterpreter/src/file.txt");
     std::string input = file.GetFileContentsAsString();
 
