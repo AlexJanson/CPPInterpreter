@@ -24,46 +24,46 @@ std::variant<int, float, std::string> Token::GetValue() const {
 std::string Token::GetTypeName() const {
     std::string result;
     switch (type) {
-        case INTEGER:
+        case TokenType::INTEGER:
             result = "INTEGER";
             break;
-        case PLUS:
+        case TokenType::PLUS:
             result = "PLUS";
             break;
-        case MINUS:
+        case TokenType::MINUS:
             result = "MINUS";
             break;
-        case MUL:
+        case TokenType::MUL:
             result = "MUL";
             break;
-        case DIV:
+        case TokenType::DIV:
             result = "DIV";
             break;
-        case LPAREN:
+        case TokenType::LPAREN:
             result = "LPAREN";
             break;
-        case RPAREN:
+        case TokenType::RPAREN:
             result = "RPAREN";
             break;
-        case OPENPAREN:
+        case TokenType::OPENPAREN:
             result = "OPENPAREN";
             break;
-        case CLOSEPAREN:
+        case TokenType::CLOSEPAREN:
             result = "CLOSEPAREN";
             break;
-        case SEMI:
+        case TokenType::SEMI:
             result = "SEMI";
             break;
-        case ASSIGN:
+        case TokenType::ASSIGN:
             result = "ASSIGN";
             break;
-        case ID:
+        case TokenType::ID:
             result = "ID";
             break;
-        case VAR:
+        case TokenType::VAR:
             result = "VAR";
             break;
-        case TOKENEOF:
+        case TokenType::TOKENEOF:
             result = "TOKENEOF";
             break;
         default: result = "UNKNOWN";

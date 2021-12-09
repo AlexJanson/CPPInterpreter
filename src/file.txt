@@ -1,8 +1,9 @@
-c = 3;
+int c = 3.2;
 
 {
     a = 4;
     b = (a + 4);
+    d = c + a;
 }
 
 /* This is a comment! */

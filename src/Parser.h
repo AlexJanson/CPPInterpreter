@@ -20,21 +20,21 @@ public:
 private:
     static void Error();
     void Eat(const Token::TokenType& type);
-    std::shared_ptr<AST*> Module();
-    std::shared_ptr<AST*> Block();
-    std::vector<std::shared_ptr<AST*>> Declarations();
-    std::vector<std::shared_ptr<AST*>> VariableDeclarations();
-    std::shared_ptr<AST*> TypeSpec();
-    std::shared_ptr<AST*> CompoundStatement();
-    std::vector<std::shared_ptr<AST *>> StatementList();
-    std::shared_ptr<AST*> Statement();
-    std::shared_ptr<AST*> AssignmentStatement();
-    std::shared_ptr<AST*> Variable();
-    std::shared_ptr<AST*> Empty();
-    std::shared_ptr<AST*> Factor();
-    std::shared_ptr<AST*> Term();
-    std::shared_ptr<AST*> Expr();
+    std::shared_ptr<AST> Module();
+    std::shared_ptr<AST> Block();
+    std::vector<std::shared_ptr<AST>> Declarations();
+    std::vector<std::shared_ptr<AST>> VariableDeclarations(std::shared_ptr<AST> typeNode);
+    std::shared_ptr<AST> TypeSpec();
+    std::shared_ptr<AST> CompoundStatement();
+    std::vector<std::shared_ptr<AST>> StatementList();
+    std::shared_ptr<AST> Statement();
+    std::shared_ptr<AST> AssignmentStatement();
+    std::shared_ptr<AST> Variable();
+    std::shared_ptr<AST> Empty();
+    std::shared_ptr<AST> Factor();
+    std::shared_ptr<AST> Term();
+    std::shared_ptr<AST> Expr();
 public:
     Parser(const Lexer& lexer);
-    std::shared_ptr<AST*> Parse();
+    std::shared_ptr<AST> Parse();
 };

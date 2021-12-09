@@ -19,108 +19,120 @@ void Parser::Eat(const Token::TokenType& type) {
         Error();
 }
 
-std::shared_ptr<AST *> Parser::Module() {
-    std::shared_ptr<AST*> node;
+std::shared_ptr<AST> Parser::Module() {
+    std::shared_ptr<AST> node;
 
-    if (currentToken.GetType() == Token::OPENPAREN)
+    Declarations();
+
+    if (currentToken.GetType() == Token::TokenType::OPENPAREN)
         node = CompoundStatement();
-    else if (currentToken.GetType() == Token::ID)
-        return std::make_shared<AST*>(new class Module(StatementList()));
+    else if (currentToken.GetType() == Token::TokenType::ID)
+        return std::make_shared<class Module>(class Module(StatementList()));
     else
         node = Empty();
 
     return node;
 }
 
-std::vector<std::shared_ptr<AST *>> Parser::Declarations() {
-    std::vector<std::shared_ptr<AST*>> declarations;
+std::vector<std::shared_ptr<AST>> Parser::Declarations() {
+    std::vector<std::shared_ptr<AST>> declarations;
 
-    if (currentToken.GetType() == Token::FLOAT || currentToken.GetType() == Token::INTEGER) {
-        Eat(currentToken.GetType());
+    // 1. get the type of the variable(s)
+    // 2. loop over all the IDs
+    // 3. Eat the SEMI
+    // 4. repeat
 
-        while (currentToken.GetType() == Token::ID) {
-            auto varDecl = VariableDeclarations();
+    // maybe:
+    // while current is FLOAT or INTEGER repeat ^?
+
+    while (currentToken.GetType() == Token::TokenType::FLOAT || currentToken.GetType() == Token::TokenType::INTEGER) {
+        std::shared_ptr<AST> typeNode = TypeSpec();
+
+        if (currentToken.GetType() == Token::TokenType::ID) {
+            auto varDecl = VariableDeclarations(typeNode);
             declarations.reserve(declarations.size() + std::distance(varDecl.begin(), varDecl.end()));
             declarations.insert(declarations.end(), varDecl.begin(), varDecl.end());
-            Eat(Token::SEMI);
+            Eat(Token::TokenType::SEMI);
         }
     }
 
     return declarations;
 }
 
-std::vector<std::shared_ptr<AST*>> Parser::VariableDeclarations() {
-    std::shared_ptr<AST*> typeNode = TypeSpec();
+std::vector<std::shared_ptr<AST>> Parser::VariableDeclarations(std::shared_ptr<AST> typeNode) {
 
-    std::vector<std::shared_ptr<AST*>> varNodes {
-            std::make_shared<AST*>(new Var(currentToken))
+    // VAR holds the name and call Expr() for the value?
+    // make a VarDecl that has both the name and the value and type?
+
+    std::vector<std::shared_ptr<AST>> varNodes {
+            std::make_shared<Var>(currentToken)
     };
-    Eat(Token::ID);
+    Eat(Token::TokenType::ID);
 
-    while (currentToken.GetType() == Token::COMMA) {
-        Eat(Token::COMMA);
-        varNodes.emplace_back(std::make_shared<AST*>(new Var(currentToken)));
-        Eat(Token::ID);
+    while (currentToken.GetType() == Token::TokenType::COMMA) {
+        Eat(Token::TokenType::COMMA);
+        varNodes.emplace_back(std::make_shared<Var>(currentToken));
+        Eat(Token::TokenType::ID);
     }
 
-    Eat(Token::SEMI);
+    Eat(Token::TokenType::SEMI);
 
-    std::vector<std::shared_ptr<AST*>> varDeclarations;
+    std::vector<std::shared_ptr<AST>> varDeclarations;
     varDeclarations.reserve(varNodes.size());
     for (const auto& varNode : varNodes) {
-        varDeclarations.emplace_back(std::make_shared<AST*>(new VarDecl(varNode, typeNode)));
+        varDeclarations.emplace_back(std::make_shared<VarDecl>(varNode, typeNode));
     }
 
     return varDeclarations;
 }
 
-std::shared_ptr<AST*> Parser::TypeSpec() {
+std::shared_ptr<AST> Parser::TypeSpec() {
     Token token = currentToken;
-    if (currentToken.GetType() == Token::INTEGER) {
-        Eat(Token::INTEGER);
+    if (currentToken.GetType() == Token::TokenType::INTEGER) {
+        Eat(Token::TokenType::INTEGER);
     } else {
-        Eat(Token::FLOAT);
+        Eat(Token::TokenType::FLOAT);
     }
 
-    return std::make_shared<AST*>(new Type(token));
+    return std::make_shared<Type>(token);
 }
 
-std::shared_ptr<AST*> Parser::CompoundStatement() {
-    Eat(Token::OPENPAREN);
-    std::vector<std::shared_ptr<AST*>> nodes = StatementList();
-    Eat(Token::CLOSEPAREN);
+std::shared_ptr<AST> Parser::CompoundStatement() {
+    Eat(Token::TokenType::OPENPAREN);
+    std::vector<std::shared_ptr<AST>> nodes = StatementList();
+    Eat(Token::TokenType::CLOSEPAREN);
 
-    std::vector<std::shared_ptr<AST*>> children;
+    std::vector<std::shared_ptr<AST>> children;
     children.reserve(nodes.size());
     for (const auto& node : nodes) {
         children.push_back(node);
     }
 
-    return std::make_shared<AST*>(new Compound(children));
+    return std::make_shared<Compound>(children);
 }
 
-std::vector<std::shared_ptr<AST *>> Parser::StatementList() {
+std::vector<std::shared_ptr<AST>> Parser::StatementList() {
     auto node = Statement();
 
-    std::vector<std::shared_ptr<AST*>> results = {node};
+    std::vector<std::shared_ptr<AST>> results = {node};
 
-    while (currentToken.GetType() == Token::SEMI) {
-        Eat(Token::SEMI);
+    while (currentToken.GetType() == Token::TokenType::SEMI) {
+        Eat(Token::TokenType::SEMI);
         results.push_back(Statement());
     }
 
-    if (currentToken.GetType() == Token::ID)
+    if (currentToken.GetType() == Token::TokenType::ID)
         Error();
 
     return results;
 }
 
-std::shared_ptr<AST *> Parser::Statement() {
-    std::shared_ptr<AST*> node;
+std::shared_ptr<AST> Parser::Statement() {
+    std::shared_ptr<AST> node;
 
-    if (currentToken.GetType() == Token::OPENPAREN)
+    if (currentToken.GetType() == Token::TokenType::OPENPAREN)
         node = CompoundStatement();
-    else if (currentToken.GetType() == Token::ID)
+    else if (currentToken.GetType() == Token::TokenType::ID)
         node = AssignmentStatement();
     else
         node = Empty();
@@ -128,43 +140,47 @@ std::shared_ptr<AST *> Parser::Statement() {
     return node;
 }
 
-std::shared_ptr<AST *> Parser::AssignmentStatement() {
+std::shared_ptr<AST> Parser::AssignmentStatement() {
     auto left = Variable();
     Token token = currentToken;
-    Eat(Token::ASSIGN);
+    Eat(Token::TokenType::ASSIGN);
     auto right = Expr();
-    auto node = std::make_shared<AST*>(new Assign(left, token, right));
+    auto node = std::make_shared<Assign>(left, token, right);
     return node;
 }
 
-std::shared_ptr<AST *> Parser::Variable() {
-    auto node = std::make_shared<AST*>(new Var(currentToken));
-    Eat(Token::ID);
+std::shared_ptr<AST> Parser::Variable() {
+    auto node = std::make_shared<Var>(currentToken);
+    Eat(Token::TokenType::ID);
     return node;
 }
 
-std::shared_ptr<AST *> Parser::Empty() {
-    return std::make_shared<AST*>(new NoOp());
+std::shared_ptr<AST> Parser::Empty() {
+    return std::make_shared<NoOp>();
 }
 
-std::shared_ptr<AST*> Parser::Factor() {
+std::shared_ptr<AST> Parser::Factor() {
     Token token = currentToken;
-    if (token.GetType() == Token::PLUS) {
-        Eat(Token::PLUS);
-        return std::make_shared<AST*>(new UnaryOp(token, Factor()));
+    if (token.GetType() == Token::TokenType::PLUS) {
+        Eat(Token::TokenType::PLUS);
+        return std::make_shared<UnaryOp>(token, Factor());
     }
-    else if (token.GetType() == Token::MINUS) {
-        Eat(Token::MINUS);
-        return std::make_shared<AST*>(new UnaryOp(token, Factor()));
+    else if (token.GetType() == Token::TokenType::MINUS) {
+        Eat(Token::TokenType::MINUS);
+        return std::make_shared<UnaryOp>(token, Factor());
     }
-    else if (token.GetType() == Token::INTEGER) {
-        Eat(Token::INTEGER);
-        return std::make_shared<AST*>(new Num(token));
+    else if (token.GetType() == Token::TokenType::INTEGER_CONST) {
+        Eat(Token::TokenType::INTEGER_CONST);
+        return std::make_shared<Num<int>>(token);
     }
-    else if (token.GetType() == Token::LPAREN) {
-        Eat(Token::LPAREN);
+    else if (token.GetType() == Token::TokenType::FLOAT_CONST) {
+        Eat(Token::TokenType::FLOAT_CONST);
+        return std::make_shared<Num<float>>(token);
+    }
+    else if (token.GetType() == Token::TokenType::LPAREN) {
+        Eat(Token::TokenType::LPAREN);
         auto node = Expr();
-        Eat(Token::RPAREN);
+        Eat(Token::TokenType::RPAREN);
         return node;
     }
     else {
@@ -172,45 +188,45 @@ std::shared_ptr<AST*> Parser::Factor() {
     }
 }
 
-std::shared_ptr<AST*> Parser::Term() {
+std::shared_ptr<AST> Parser::Term() {
     auto node = Factor();
 
-    while (currentToken.GetType() == Token::MUL || currentToken.GetType() == Token::DIV) {
+    while (currentToken.GetType() == Token::TokenType::MUL || currentToken.GetType() == Token::TokenType::DIV) {
         Token token = currentToken;
-        if (currentToken.GetType() == Token::MUL)
-            Eat(Token::MUL);
-        else if (currentToken.GetType() == Token::DIV)
-            Eat(Token::DIV);
+        if (currentToken.GetType() == Token::TokenType::MUL)
+            Eat(Token::TokenType::MUL);
+        else if (currentToken.GetType() == Token::TokenType::DIV)
+            Eat(Token::TokenType::DIV);
         else
             throw std::exception("Invalid syntax");
 
-        node = std::make_shared<AST*>(new BinOp(node, token, Factor()));
+        node = std::make_shared<BinOp>(node, token, Factor());
     }
 
     return node;
 }
 
-std::shared_ptr<AST*> Parser::Expr() {
+std::shared_ptr<AST> Parser::Expr() {
     auto node = Term();
 
-    while (currentToken.GetType() == Token::PLUS || currentToken.GetType() == Token::MINUS) {
+    while (currentToken.GetType() == Token::TokenType::PLUS || currentToken.GetType() == Token::TokenType::MINUS) {
         Token token = currentToken;
-        if (token.GetType() == Token::PLUS)
-            Eat(Token::PLUS);
-        else if (token.GetType() == Token::MINUS)
-            Eat(Token::MINUS);
+        if (token.GetType() == Token::TokenType::PLUS)
+            Eat(Token::TokenType::PLUS);
+        else if (token.GetType() == Token::TokenType::MINUS)
+            Eat(Token::TokenType::MINUS);
         else
             throw std::exception("Invalid syntax");
 
-        node = std::make_shared<AST*>(new BinOp(node, token, Term()));
+        node = std::make_shared<BinOp>(node, token, Term());
     }
 
     return node;
 }
 
-std::shared_ptr<AST*> Parser::Parse() {
+std::shared_ptr<AST> Parser::Parse() {
     auto node = Module();
-    if (currentToken.GetType() != Token::TOKENEOF) {
+    if (currentToken.GetType() != Token::TokenType::TOKENEOF) {
         Error();
     }
 

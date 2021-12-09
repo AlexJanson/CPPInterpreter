@@ -14,5 +14,5 @@ private:
 public:
     Interpreter(Parser parser, NodeVisitor* visitor);
     ~Interpreter();
-    int Interpret();
+    float Interpret();
 };

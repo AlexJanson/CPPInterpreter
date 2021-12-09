@@ -12,16 +12,17 @@
 class BinOp : public AST {
 public:
     Token op, token;
-    std::shared_ptr<AST*> left, right;
+    std::shared_ptr<AST> left, right;
 public:
-    BinOp(std::shared_ptr<AST*> left, const Token& op, std::shared_ptr<AST*> right);
+    BinOp(std::shared_ptr<AST> left, const Token& op, std::shared_ptr<AST> right);
     void Accept(Visitor& visitor) override;
 };
 
+template<typename T>
 class Num : public AST {
 public:
     Token token;
-    int value;
+    T value;
 public:
     Num(const Token& token);
     void Accept(Visitor& visitor) override;
@@ -30,18 +31,18 @@ public:
 class UnaryOp : public AST {
 public:
     Token op, token;
-    std::shared_ptr<AST*> expr;
+    std::shared_ptr<AST> expr;
 public:
-    UnaryOp(const Token& op, std::shared_ptr<AST*> expr);
+    UnaryOp(const Token& op, std::shared_ptr<AST> expr);
     void Accept(Visitor& visitor) override;
 };
 
 class Module : public AST {
 public:
-    std::vector<std::shared_ptr<AST*>> children;
+    std::vector<std::shared_ptr<AST>> children;
 public:
     Module() = default;
-    Module(std::vector<std::shared_ptr<AST*>> children);
+    Module(std::vector<std::shared_ptr<AST>> children);
     void Accept(Visitor& visitor) override;
 };
 
@@ -56,19 +57,19 @@ public:
 
 class Compound : public AST {
 public:
-    std::vector<std::shared_ptr<AST*>> children;
+    std::vector<std::shared_ptr<AST>> children;
 public:
     Compound() = default;
-    Compound(std::vector<std::shared_ptr<AST*>> children);
+    Compound(std::vector<std::shared_ptr<AST>> children);
     void Accept(Visitor& visitor) override;
 };
 
 class Assign : public AST {
 public:
     Token op, token;
-    std::shared_ptr<AST*> left, right;
+    std::shared_ptr<AST> left, right;
 public:
-    Assign(std::shared_ptr<AST*> left, const Token& op, std::shared_ptr<AST*> right);
+    Assign(std::shared_ptr<AST> left, const Token& op, std::shared_ptr<AST> right);
     void Accept(Visitor& visitor) override;
 };
 
@@ -83,10 +84,10 @@ public:
 
 class VarDecl : public AST {
 public:
-    std::shared_ptr<AST*> varNode;
-    std::shared_ptr<AST*> typeNode;
+    std::shared_ptr<AST> varNode;
+    std::shared_ptr<AST> typeNode;
 public:
-    VarDecl(std::shared_ptr<AST*> varNode, std::shared_ptr<AST*> typeNode);
+    VarDecl(std::shared_ptr<AST> varNode, std::shared_ptr<AST> typeNode);
     void Accept(Visitor& visitor) override;
 };
 

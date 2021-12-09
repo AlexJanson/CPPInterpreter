@@ -11,7 +11,8 @@
 class Visitor {
 public:
     virtual void Visit(BinOp& binOpNode) = 0;
-    virtual void Visit(Num& numNode) = 0;
+    virtual void Visit(Num<int>& intNode) = 0;
+    virtual void Visit(Num<float>& floatNode) = 0;
     virtual void Visit(UnaryOp& unaryOpNode) = 0;
     virtual void Visit(Module& moduleNode) = 0;
     virtual void Visit(Block& blockNode) = 0;
@@ -25,11 +26,12 @@ public:
 
 class NodeVisitor : public Visitor {
 public:
-    int result {};
-    std::unordered_map<std::string, int> globalScope; // TEMP HACK
+    float result {};
+    std::unordered_map<std::string, float> globalScope; // TEMP HACK
 public:
     void Visit(BinOp& binOpNode) override;
-    void Visit(Num& numNode) override;
+    void Visit(Num<int>& intNode) override;
+    void Visit(Num<float>& floatNode) override;
     void Visit(UnaryOp& unaryOpNode) override;
     void Visit(Module& moduleNode) override;
     void Visit(Block& blockNode) override;

@@ -13,9 +13,9 @@ Interpreter::~Interpreter() {
     delete visitor;
 }
 
-int Interpreter::Interpret() {
-    std::shared_ptr<AST*> tree = parser.Parse();
-    (*tree)->Accept(*visitor);
+float Interpreter::Interpret() {
+    std::shared_ptr<AST> tree = parser.Parse();
+    tree->Accept(*visitor);
     return visitor->result;
 }
 

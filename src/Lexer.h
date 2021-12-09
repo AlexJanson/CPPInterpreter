@@ -16,8 +16,9 @@ private:
     char currentChar;
 
     std::unordered_map<std::string, Token> reservedKeywords = {
-            { "var", Token(Token::VAR, "var") },
-            { "float", Token(Token::FLOAT, "float") }
+        { "var", Token(Token::TokenType::VAR, "var") },
+        { "float", Token(Token::TokenType::FLOAT, "float") },
+        { "int", Token(Token::TokenType::INTEGER, "integer") }
     };
 public:
     Lexer(std::string input);

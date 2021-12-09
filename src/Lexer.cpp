@@ -45,7 +45,7 @@ Token Lexer::Id() {
         Advance();
     }
 
-    Token token = reservedKeywords.count(result) ? reservedKeywords.at(result) : Token(Token::ID, result);
+    Token token = reservedKeywords.count(result) ? reservedKeywords.at(result) : Token(Token::TokenType::ID, result);
     return token;
 }
 
@@ -65,10 +65,10 @@ Token Lexer::Number() {
             Advance();
         }
 
-        return {Token::FLOAT_CONST, std::stof(result)};
+        return {Token::TokenType::FLOAT_CONST, std::stof(result)};
     }
 
-    return {Token::INTEGER, std::stoi(result)};
+    return {Token::TokenType::INTEGER_CONST, std::stoi(result)};
 }
 
 Token Lexer::GetNextToken() {
@@ -93,63 +93,63 @@ Token Lexer::GetNextToken() {
 
         if (currentChar == '+') {
             Advance();
-            return {Token::PLUS, "+"};
+            return {Token::TokenType::PLUS, "+"};
         }
 
         if (currentChar == '-') {
             Advance();
-            return {Token::MINUS, "-"};
+            return {Token::TokenType::MINUS, "-"};
         }
 
         if (currentChar == '*') {
             Advance();
-            return {Token::MUL, "*"};
+            return {Token::TokenType::MUL, "*"};
         }
 
         if (currentChar == '/') {
             Advance();
-            return {Token::DIV, "/"};
+            return {Token::TokenType::DIV, "/"};
         }
 
         if (currentChar == '(') {
             Advance();
-            return {Token::LPAREN, "("};
+            return {Token::TokenType::LPAREN, "("};
         }
 
         if (currentChar == ')') {
             Advance();
-            return {Token::RPAREN, ")"};
+            return {Token::TokenType::RPAREN, ")"};
         }
 
         if (currentChar == '{') {
             Advance();
-            return {Token::OPENPAREN, "{"};
+            return {Token::TokenType::OPENPAREN, "{"};
         }
 
         if (currentChar == '}') {
             Advance();
-            return {Token::CLOSEPAREN, "}"};
+            return {Token::TokenType::CLOSEPAREN, "}"};
         }
 
         if (currentChar == '=') {
             Advance();
-            return {Token::ASSIGN, "="};
+            return {Token::TokenType::ASSIGN, "="};
         }
 
         if (currentChar == ';') {
             Advance();
-            return {Token::SEMI, ";"};
+            return {Token::TokenType::SEMI, ";"};
         }
 
         if (currentChar == ',') {
             Advance();
-            return {Token::COMMA, ","};
+            return {Token::TokenType::COMMA, ","};
         }
 
         Error();
     }
 
-    return {Token::TOKENEOF, 0};
+    return {Token::TokenType::TOKENEOF, 0};
 }
 
 Lexer::Lexer(std::string input)

@@ -7,21 +7,32 @@
 
 #include <utility>
 
-BinOp::BinOp(std::shared_ptr<AST*> left, const Token &op, std::shared_ptr<AST*> right)
+BinOp::BinOp(std::shared_ptr<AST> left, const Token &op, std::shared_ptr<AST> right)
     : left(std::move(left)), op(op), token(op), right(std::move(right)) {}
 
 void BinOp::Accept(Visitor& visitor) {
     visitor.Visit(*this);
 }
 
-Num::Num(const Token &token)
+template class Num<int>;
+Num<int>::Num(const Token& token)
     : token(token), value(std::get<int>(token.GetValue())) {}
 
-void Num::Accept(Visitor& visitor) {
+template class Num<float>;
+Num<float>::Num(const Token& token)
+    : token(token), value(std::get<float>(token.GetValue())) {}
+
+template class Num<float>;
+void Num<float>::Accept(Visitor& visitor) {
     visitor.Visit(*this);
 }
 
-UnaryOp::UnaryOp(const Token& op, std::shared_ptr<AST*> expr)
+template class Num<int>;
+void Num<int>::Accept(Visitor& visitor) {
+    visitor.Visit(*this);
+}
+
+UnaryOp::UnaryOp(const Token& op, std::shared_ptr<AST> expr)
     : op(op), token(op), expr(std::move(expr)) {}
 
 void UnaryOp::Accept(Visitor &visitor) {
@@ -32,7 +43,7 @@ void Compound::Accept(Visitor &visitor) {
     visitor.Visit(*this);
 }
 
-Module::Module(std::vector<std::shared_ptr<AST*>> children)
+Module::Module(std::vector<std::shared_ptr<AST>> children)
     : children(std::move(children)) {}
 
 void Module::Accept(Visitor &visitor) {
@@ -46,10 +57,10 @@ void Block::Accept(Visitor &visitor) {
     visitor.Visit(*this);
 }
 
-Compound::Compound(std::vector<std::shared_ptr<AST *>> children)
+Compound::Compound(std::vector<std::shared_ptr<AST>> children)
     : children(std::move(children)) {}
 
-Assign::Assign(std::shared_ptr<AST*> left, const Token& op, std::shared_ptr<AST*> right)
+Assign::Assign(std::shared_ptr<AST> left, const Token& op, std::shared_ptr<AST> right)
     : op(op), token(op), left(std::move(left)), right(std::move(right)) {}
 
 void Assign::Accept(Visitor &visitor) {
@@ -63,7 +74,7 @@ void Var::Accept(Visitor& visitor) {
     visitor.Visit(*this);
 }
 
-VarDecl::VarDecl(std::shared_ptr<AST *> varNode, std::shared_ptr<AST *> typeNode)
+VarDecl::VarDecl(std::shared_ptr<AST> varNode, std::shared_ptr<AST> typeNode)
         : varNode(std::move(varNode)), typeNode(std::move(typeNode)) {}
 
 void VarDecl::Accept(Visitor &visitor) {

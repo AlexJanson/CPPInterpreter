@@ -8,9 +8,9 @@
 
 class ProgramTest : public ::testing::Test {
 protected:
-    Lexer lexer;
-    Parser parser;
-    Interpreter interpreter;
+    Lexer lexer{""};
+    Parser parser{lexer};
+    Interpreter interpreter{parser, nullptr};
 
     ProgramTest() {};
 
@@ -26,15 +26,15 @@ protected:
 };
 
 TEST_F(ProgramTest, BasicAssertions) {
-    File file("C:/CLion Projects/CPPInterpreter/src/file.txt");
+    File file("D:/CLion Projects/CPPInterpreter/src/file.txt");
     std::string input = file.GetFileContentsAsString();
 
     auto* visitor = new NodeVisitor();
     Lexer lexer { input };
     Parser parser { lexer };
     Interpreter interpreter { parser, visitor };
-    int result = interpreter.Interpret();
+    float result = interpreter.Interpret();
     std::cout << result << "\n";
 
-    EXPECT_EQ(result, 8);
+    EXPECT_EQ(result, 7.2f);
 }

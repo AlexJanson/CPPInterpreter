@@ -5,7 +5,7 @@
 #include "src/Utils/File.h"
 
 int main() {
-    File file("C:/CLion Projects/CPPInterpreter/src/file.txt");
+    File file("D:/CLion Projects/CPPInterpreter/src/file.txt");
     std::string input = file.GetFileContentsAsString();
 
     if (input.empty())
@@ -15,7 +15,7 @@ int main() {
     Lexer lexer { input };
     Parser parser { lexer };
     Interpreter interpreter { parser, visitor };
-    int result = interpreter.Interpret();
+    float result = interpreter.Interpret();
     std::cout << result << "\n";
 
     for (auto const& pair : visitor->globalScope) {

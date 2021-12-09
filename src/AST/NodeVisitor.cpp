@@ -8,44 +8,44 @@
 
 void NodeVisitor::Visit(BinOp &binOpNode) {
     Token::TokenType tokenType = binOpNode.op.GetType();
-    (*binOpNode.left)->Accept(*this);
-    int left = result;
+    binOpNode.left->Accept(*this);
+    float left = result;
 
-    (*binOpNode.right)->Accept(*this);
-    int right = result;
+    binOpNode.right->Accept(*this);
+    float right = result;
 
     switch (tokenType) {
-        case Token::PLUS: result = left + right; break;
-        case Token::MINUS: result = left - right; break;
-        case Token::MUL: result = left * right; break;
-        case Token::DIV: result = left / right; break;
+        case Token::TokenType::PLUS: result = left + right; break;
+        case Token::TokenType::MINUS: result = left - right; break;
+        case Token::TokenType::MUL: result = left * right; break;
+        case Token::TokenType::DIV: result = left / right; break;
         default: throw std::exception("Error");
     }
 }
 
-void NodeVisitor::Visit(Num &numNode) {
-    Token::TokenType tokenType = numNode.token.GetType();
-    switch (tokenType) {
-        case Token::INTEGER: result = std::get<int>(numNode.token.GetValue()); break;
-        default: throw std::exception("Error");
-    }
+void NodeVisitor::Visit(Num<int>& intNode) {
+    result = std::get<int>(intNode.token.GetValue());
+}
+
+void NodeVisitor::Visit(Num<float> &floatNode) {
+    result = std::get<float>(floatNode.token.GetValue());
 }
 
 void NodeVisitor::Visit(UnaryOp &unaryOpNode) {
     Token::TokenType tokenType = unaryOpNode.token.GetType();
-    if (tokenType == Token::PLUS) {
-        (*unaryOpNode.expr)->Accept(*this);
+    if (tokenType == Token::TokenType::PLUS) {
+        unaryOpNode.expr->Accept(*this);
         result = +result;
     }
-    else if (tokenType == Token::MINUS) {
-        (*unaryOpNode.expr)->Accept(*this);
+    else if (tokenType == Token::TokenType::MINUS) {
+        unaryOpNode.expr->Accept(*this);
         result = -result;
     }
 }
 
 void NodeVisitor::Visit(Module &moduleNode) {
     for (const auto& child : moduleNode.children)
-        (*child)->Accept(*this);
+        child->Accept(*this);
 }
 
 void NodeVisitor::Visit(Block &blockNode) {
@@ -54,13 +54,13 @@ void NodeVisitor::Visit(Block &blockNode) {
 
 void NodeVisitor::Visit(Compound &compoundNode) {
     for (const auto& child : compoundNode.children)
-        (*child)->Accept(*this);
+        child->Accept(*this);
 }
 
 void NodeVisitor::Visit(Assign &assignNode) {
-    Var* leftNode = (Var*)(*assignNode.left);
+    std::shared_ptr<Var> leftNode = std::static_pointer_cast<Var>(assignNode.left);
     std::string varName = std::get<std::string>(leftNode->value);
-    (*assignNode.right)->Accept(*this);
+    assignNode.right->Accept(*this);
     globalScope.insert(std::make_pair(varName, result));
 }
 

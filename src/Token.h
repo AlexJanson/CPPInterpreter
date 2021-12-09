@@ -8,7 +8,7 @@
 
 class Token {
 public:
-    enum TokenType {
+    enum class TokenType {
         INTEGER = 0, INTEGER_CONST, FLOAT, FLOAT_CONST, PLUS, MINUS, MUL, DIV, LPAREN, RPAREN, OPENPAREN, CLOSEPAREN, SEMI, COMMA, ASSIGN, ID, VAR, TOKENEOF
     };
 private:
